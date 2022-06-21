@@ -11,13 +11,13 @@ int main()
 
     for (int i = 0; i < str.length(); i++)
     {
-      char c = str[i];
-      if (islower(c)) 
-        cout << alphabets[(int) c - 97];
-      else if (isupper(c)) 
-        cout << alphabets[(int) c - 65];
-      else
-        cout << c;
+        char c = str[i];
+        if (islower(c)) 
+          cout << alphabets[(int) c - 97];
+        else if (isupper(c)) 
+          cout << alphabets[(int) c - 65];
+        else
+          cout << c;
     }
     cout << endl;
 

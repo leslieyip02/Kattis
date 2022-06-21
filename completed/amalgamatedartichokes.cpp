@@ -29,5 +29,5 @@ int main()
 
 double price(int k)
 {
-  return p * (sin(a * k + b) + cos(c * k + d) + 2);
+    return p * (sin(a * k + b) + cos(c * k + d) + 2);
 }

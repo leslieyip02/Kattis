@@ -44,6 +44,5 @@
         "regex": "cpp",
         "valarray": "cpp",
         "list": "cpp"
-    },
-    "C_Cpp.errorSquiggles": "Disabled"
+    }
 }

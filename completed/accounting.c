@@ -12,7 +12,7 @@ int main(void)
     int ppl[n][2];
     for (int k = 0; k < n; k++)
     {
-        // -1 means
+        // -1 means not changed
         ppl[k][0] = 0;
         ppl[k][1] = -1;
     }
