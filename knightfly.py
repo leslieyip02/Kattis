@@ -1,102 +1,77 @@
 import sys
-from bisect import insort
 
-def can_fly_to(x1, y1, x2, y2):
-    # check for the number of clear cells
-    # along L shape path between point
 
-    # print(f"Checking {x1, y1, x2, y2}")
+def fly_from(x1, y1):
+    new_starters = []
     
-    # horizontal -> vertical
-    # check corner exists
-    if y1 in cols.get(x2):
-        try:
-            # print(rows[y1], rows[y1].index(x2), rows[y1].index(x1))
-            # print(cols[x1], cols[x2].index(y2), cols[x2].index(y1))
-            # check there are 2 clear cells along horizontal
-            # and 1 clear cell along vertical
-            w = abs(rows[y1].index(x2) - rows[y1].index(x1))
-            h = abs(cols[x2].index(y2) - cols[x2].index(y1)) 
-            if ((w == 2 and h == 1) or
-                (w == 1 and h == 2)):
-                return True 
-        except ValueError:
-            pass
+    for o1 in (2, -2):
+        if len(rows[y1]) > 2:
+            x2_i = rows[y1].index(x1) + o1
+            if 0 <= x2_i < len(rows[y1]):
+                x2 = rows[y1][x2_i]
 
-    # vertical -> horizontal
-    if x1 in rows.get(y2):
-        try:
-            # print(cols[x1], cols[x1].index(y2), cols[x1].index(y1))
-            # print(rows[y2], rows[y2].index(x2), rows[y2].index(x1))
-            w = abs(cols[x1].index(y2) - cols[x1].index(y1))
-            h = abs(rows[y2].index(x2) - rows[y2].index(x1))
-            if ((w == 2 and h == 1) or
-                (w == 1 and h == 2)):
-                return True 
-        except ValueError:
-            pass
+                if len(cols[x2]) > 1:
+                    for o2 in (1, -1):
+                        y2_i = cols[x2].index(y1) + o2
+                        if 0 <= y2_i < len(cols[x2]) :
+                            y2 = cols[x2][y2_i]
+                            if cells[(x2, y2)] == -1:
+                                cells[(x2, y2)] = cells[(x1, y1)] + 1
+                                if x2 == tx and y2 == ty:
+                                    return []
+                                else:
+                                    new_starters.append((x2, y2))
 
-    return False
+        if len(cols[x1]) > 2:
+            y3_i = cols[x1].index(y1) + o1
+            if 0 <= y3_i < len(cols[x1]):
+                y3 = cols[x1][y3_i]
 
+                if len(rows[y3]) > 1:
+                    for o2 in (1, -1):
+                        x3_i = rows[y3].index(x1) + o2
+                        if 0 <= x3_i < len(rows[y3]):
+                            x3 = rows[y3][x3_i]
+                            if cells[(x3, y3)] == -1:
+                                cells[(x3, y3)] = cells[(x1, y1)] + 1
+                                if x3 == tx and y3 == ty:
+                                    return []
+                                else:
+                                    new_starters.append((x3, y3))
+                        
+    return new_starters
+    
 def main():
-    global cells, rows, cols
-    
+    global cells, rows, cols, tx, ty, found
+
     n = int(sys.stdin.readline().strip())
     sx, sy, tx, ty = map(int, sys.stdin.readline().strip().split())
 
-    # track coordinates + number of moves needed to get to point
-    # -1 number of moves means the cell has not been accessed yet
-    cells = []
+    starters = set()
+    cells = {}
     rows = {}
     cols = {}
-    
-    # keep track of cells that can start tracing from
-    starters = []
 
-    for i in range(n):
+    while n > 0:
+        n = n - 1
         x, y = map(int, sys.stdin.readline().strip().split())
-        
-        if x == sx and y == sy:
-            cells.append([x, y, 0])
-            starters.append(cells[i])
-        else:
-            cells.append([x, y, -1])
+ 
+        cells[(x, y)] = -1
+        rows[y] = rows.get(y, [])
+        rows[y] += x,
+        cols[x] = cols.get(x, [])
+        cols[x] += y,
 
-        try:
-            insort(rows[y], x)
-        except KeyError:
-            rows[y] = [x]
-
-        try:
-            insort(cols[x], y)
-        except KeyError:
-            cols[x] = [y]
-
-    # only keep looping if new cells are traced into
+    cells[(sx, sy)] = 0
+    starters.add((sx, sy))
     while len(starters) > 0:
-        new_starters = []
-        # only search for new cells from cells that have been accessed
+        new_starters = set()
         for starter in starters:
-            for i in range(len(cells)):
-                if can_fly_to(starter[0], starter[1], cells[i][0], cells[i][1]):
-                    # for cells that have been traced into, check if there's a shorter path
-                    if cells[i][2] > 0:
-                        if starter[2] + 1 < cells[i][2]:
-                            cells[i][2] = starter[2] + 1
-                            # look through cell again
-                            new_starters.append(cells[i])
-                    # check cells that haven't been accessed yet
-                    elif cells[i][2] == -1:
-                        cells[i][2] = starter[2] + 1
-                        new_starters.append(cells[i])
-        
+            new_starters.update(fly_from(*starter))
         starters = new_starters
-        # print(starters)
 
-    for cell in cells:
-        if cell[0] == tx and cell[1] == ty:
-            print(cell[2])
-            return
+    sys.stdout.write(f"{cells[(tx, ty)]}\n")
+    return
 
 if __name__ == "__main__":
     main()
