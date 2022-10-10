@@ -6,7 +6,7 @@ using namespace std;
 #define ll long long
 #define ull unsigned long long
 #define MAX_N 100000000000 // 10^11
-#define CACHE_SIZE 500
+#define CACHE_SIZE 10000
 
 // Sieve of Eratosthenes to generate prime numbers from 1 to sqrt(N)
 // https://www.geeksforgeeks.org/sieve-eratosthenes-0n-time-complexity/
@@ -60,7 +60,7 @@ ull phi(ull x, ull a)
 
 int main()
 {
-    int N;
+    ull N;
     cin >> N;
 
     int smallPi[] = { 0, 0, 1, 2, 2, 3 };
@@ -96,5 +96,5 @@ int main()
     return 0;
 }
 
-// works until 10^9
-// doesn't work for 10^10 and 10^11
+// works until 10^10
+// doesn't work for 10^11
